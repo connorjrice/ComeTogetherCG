@@ -17,4 +17,8 @@ public class PlayerBox extends GameObject {
         setShape(s);
     }
     
+    public void setX(int x) {
+        
+    }
+    
 }

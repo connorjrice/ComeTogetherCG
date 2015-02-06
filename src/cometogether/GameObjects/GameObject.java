@@ -3,6 +3,7 @@ package cometogether.GameObjects;
 
 import java.awt.Color;
 import java.awt.Shape;
+import java.awt.geom.AffineTransform;
 
 /**
  *
@@ -27,6 +28,16 @@ public abstract class GameObject {
     
     public Color getColor() {
         return color;
+    }
+    
+    public void translate(int x, int y) {
+        AffineTransform at = new AffineTransform();
+        at.setToTranslation(x, y);
+        setShape(at.createTransformedShape(getShape()));
+    }
+    
+    public void setX() {
+        
     }
     
 }

@@ -25,6 +25,21 @@ public class KeyboardListener implements KeyListener {
     public void keyPressed(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
             canvasPanel.exit();
+        } 
+        if (e.getKeyCode() == KeyEvent.VK_W) {
+            canvasPanel.moveUp();
+        }
+        if (e.getKeyCode() == KeyEvent.VK_A) {
+            canvasPanel.moveLeft();
+        }
+        if (e.getKeyCode() == KeyEvent.VK_S) {
+            canvasPanel.moveDown();
+        }
+        if (e.getKeyCode() == KeyEvent.VK_D) {
+            canvasPanel.moveRight();
+        }
+        if (e.getKeyCode() == KeyEvent.VK_SPACE) {
+            canvasPanel.movementToggle();
         }
     }
 
