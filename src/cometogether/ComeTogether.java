@@ -1,5 +1,6 @@
 package cometogether;
 
+import java.awt.Color;
 import javax.swing.JFrame;
 
 /**
@@ -16,6 +17,7 @@ public class ComeTogether {
         GamePanel cp = new GamePanel();
         jf.setDefaultCloseOperation(3);
         jf.getContentPane().getGraphicsConfiguration().getDevice().setFullScreenWindow(jf);
+        jf.setBackground(Color.black);
         jf.add(cp);
     }
     
