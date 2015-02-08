@@ -27,19 +27,19 @@ public class KeyboardListener implements KeyListener {
             canvasPanel.getGame().exit();
         } 
         if (e.getKeyCode() == KeyEvent.VK_W) {
-            canvasPanel.getGame().moveUp();
+            canvasPanel.getGame().getMovementState().moveUp();
         }
         if (e.getKeyCode() == KeyEvent.VK_A) {
-            canvasPanel.getGame().moveLeft();
+            canvasPanel.getGame().getMovementState().moveLeft();
         }
         if (e.getKeyCode() == KeyEvent.VK_S) {
-            canvasPanel.getGame().moveDown();
+            canvasPanel.getGame().getMovementState().moveDown();
         }
         if (e.getKeyCode() == KeyEvent.VK_D) {
-            canvasPanel.getGame().moveRight();
+            canvasPanel.getGame().getMovementState().moveRight();
         }
         if (e.getKeyCode() == KeyEvent.VK_SPACE) {
-            canvasPanel.getGame().movementToggle();
+            canvasPanel.getGame().getMovementState().movementToggle();
         }
     }
 
