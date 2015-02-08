@@ -24,22 +24,22 @@ public class KeyboardListener implements KeyListener {
     @Override
     public void keyPressed(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
-            canvasPanel.exit();
+            canvasPanel.getGame().exit();
         } 
         if (e.getKeyCode() == KeyEvent.VK_W) {
-            canvasPanel.moveUp();
+            canvasPanel.getGame().moveUp();
         }
         if (e.getKeyCode() == KeyEvent.VK_A) {
-            canvasPanel.moveLeft();
+            canvasPanel.getGame().moveLeft();
         }
         if (e.getKeyCode() == KeyEvent.VK_S) {
-            canvasPanel.moveDown();
+            canvasPanel.getGame().moveDown();
         }
         if (e.getKeyCode() == KeyEvent.VK_D) {
-            canvasPanel.moveRight();
+            canvasPanel.getGame().moveRight();
         }
         if (e.getKeyCode() == KeyEvent.VK_SPACE) {
-            canvasPanel.movementToggle();
+            canvasPanel.getGame().movementToggle();
         }
     }
 

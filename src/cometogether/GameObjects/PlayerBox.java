@@ -23,8 +23,4 @@ public class PlayerBox extends GameObject {
         setColor(c);
     }
     
-    public void setX(int x) {
-        
-    }
-    
 }

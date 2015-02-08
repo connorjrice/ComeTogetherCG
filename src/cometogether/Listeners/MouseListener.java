@@ -17,13 +17,12 @@ public class MouseListener implements MouseInputListener {
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        //canvasPanel.selectObject(e.getX(), e.getY());
-        canvasPanel.mouseClick(e.getX(), e.getY());
+        canvasPanel.getGame().mouseClick(e.getX(), e.getY());
     }
 
     @Override
     public void mousePressed(MouseEvent e) {
-        canvasPanel.mouseClick(e.getX(), e.getY());
+        canvasPanel.getGame().mouseClick(e.getX(), e.getY());
     }
 
     @Override
@@ -48,7 +47,11 @@ public class MouseListener implements MouseInputListener {
 
     @Override
     public void mouseMoved(MouseEvent e) {
-        canvasPanel.moveMouse(e.getXOnScreen(), e.getYOnScreen());
+        if (100 < e.getXOnScreen() && e.getXOnScreen() < 1920 &&
+                100 < e.getYOnScreen() && e.getYOnScreen() < 1200 ) {
+            canvasPanel.getGame().moveMouse(e.getXOnScreen(), e.getYOnScreen());            
+        }
+
     }
 
 }
