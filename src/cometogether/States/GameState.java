@@ -1,17 +1,13 @@
 package cometogether.States;
 
-import cometogether.States.MovementState;
-import cometogether.States.ObstacleState;
 import cometogether.GameObjects.GameObject;
 import cometogether.GameObjects.PlayerBox;
 import cometogether.GamePanel;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Graphics2D;
 import java.awt.Toolkit;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.util.Iterator;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -24,6 +20,7 @@ public class GameState {
     
     private ObstacleState obstacleState;
     private MovementState movementState;
+    private GraphicsState graphicsState;
     
     private boolean gameRunning;
     private boolean update = true;
@@ -35,11 +32,7 @@ public class GameState {
     private ConcurrentHashMap gameObjects;
     private ConcurrentHashMap obstacles;
     
-    private String levelString;
     private int level;
-    
-    private BufferedImage bImg;
-
     private final GamePanel gamePanel;
     
     /**
@@ -52,11 +45,57 @@ public class GameState {
         this.screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         this.GWIDTH = screenSize.width;
         this.GHEIGHT = screenSize.height;
-        this.bImg = new BufferedImage(GWIDTH, GHEIGHT, BufferedImage.TYPE_INT_ARGB);
+
         this.obstacleState = new ObstacleState(this);
         this.movementState = new MovementState(this);
+        this.graphicsState = new GraphicsState(this);
         this.level = 4;
     }
+    
+    public void gameLoop() {
+        long lastLoopTime = System.nanoTime();
+        final long OPTIMAL_TIME = 1666666;  
+        
+        while (gameRunning) { // Loop until game ends.
+            long now = System.nanoTime();
+            long updateLength = now - lastLoopTime;
+            lastLoopTime = now;
+            double delta = updateLength / ((double)OPTIMAL_TIME);
+            
+
+            update(delta);
+            try {
+                Thread.sleep(15);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(GamePanel.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+    
+    /**
+     * Creates and runs the game loop.
+     */
+    private void runGameLoop() {
+        Thread loop = new Thread() {
+            
+            @Override
+            public void run() {
+                gameLoop();
+            }
+        };
+        loop.start();
+    }
+
+    
+    private void update(double delta) {
+        if (checkPlayerPlayerCollision()) {
+            newGame(true);
+        }
+        obstacleState.checkObstaclePlayerCollision();
+        graphicsState.updateBufferedImage();
+        gamePanel.repaint();
+    }
+    
     
     /**
      * Sets up a new game.
@@ -68,7 +107,7 @@ public class GameState {
         nextLevel(win);
         pauseGame();
         createPlayer();
-        levelString = "Level: " + (level-5);
+        graphicsState.reset();
         obstacleState.generateObstacles();
         addObstacles();
         startGame();
@@ -126,6 +165,22 @@ public class GameState {
         gameObjects.put("PlayerBox2", pb2);
     }
     
+    public void setUpdate(boolean b) {
+        update = b;
+    }
+    
+    public boolean getUpdate() {
+        return update;
+    }
+    
+    public ConcurrentHashMap getGameObjects() {
+        return gameObjects;
+    }
+    
+    public BufferedImage getImage() {
+        return graphicsState.getImage();
+    }
+    
     /**
      * @return height of GamePanel.
      */
@@ -147,87 +202,8 @@ public class GameState {
         return level;
     }
     
-    /**
-     * Creates and runs the game loop.
-     */
-    private void runGameLoop() {
-        Thread loop = new Thread() {
-            
-            @Override
-            public void run() {
-                gameLoop();
-            }
-        };
-        loop.start();
-    }
-    
-    /**
-     * @return BufferedImage of current game.
-     */
-    public BufferedImage getImage() {
-        return bImg;
-    }
-    
-    /**
-     * Updates the game.
-     */
-    private void updateBufferedImage() {
-        if (update) {
-            bImg = new BufferedImage(GWIDTH, GHEIGHT, 
-                    BufferedImage.TYPE_INT_ARGB);
-            Graphics2D bg2d = (Graphics2D) bImg.getGraphics();
-            bg2d.setColor(Color.white);
-            bg2d.drawString(levelString, 10, 10);
-            bg2d.setColor(Color.black);
-            bg2d.fillRect(0,0,GWIDTH, GHEIGHT);
-            bg2d.translate(GWIDTH/2, GHEIGHT/2);
-            bg2d.scale(1,-1);
-            for (Iterator it = gameObjects.values().iterator(); it.hasNext();) {
-                GameObject go =  (GameObject) it.next();
-                if (go.getPaint() != null) {
-                    bg2d.setPaint(go.getPaint());
-                } else {
-                    bg2d.setColor(go.getColor());                   
-                }
-                bg2d.fill(go.getShape());
-            }
-            update = false;
-            gamePanel.repaint();
-        }
-    }
-    
-    public void gameLoop() {
-        long lastLoopTime = System.nanoTime();
-        final long OPTIMAL_TIME = 1666666;  
-        
-        while (gameRunning) { // Loop until game ends.
-            long now = System.nanoTime();
-            long updateLength = now - lastLoopTime;
-            lastLoopTime = now;
-            double delta = updateLength / ((double)OPTIMAL_TIME);
-            
 
-            update(delta);
-            try {
-                Thread.sleep(25);
-            } catch (InterruptedException ex) {
-                Logger.getLogger(GamePanel.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-    }
-    
-    public void setUpdate(boolean newUpdate) {
-        update = newUpdate;
-    }
-    
-    private void update(double delta) {
-        if (checkPlayerPlayerCollision()) {
-            newGame(true);
-        }
-        obstacleState.checkObstaclePlayerCollision();
-        updateBufferedImage();
-    }
-    
+
     public boolean checkPlayerPlayerCollision() {
         return(getObject("PlayerBox").getShape().intersects(
                 getObject("PlayerBox2").getShape().getBounds()));

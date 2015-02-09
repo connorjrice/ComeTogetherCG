@@ -42,7 +42,11 @@ public class MouseListener implements MouseInputListener {
 
     @Override
     public void mouseDragged(MouseEvent e) {
-
+        if (100 < e.getXOnScreen() && e.getXOnScreen() < 1920 &&
+                100 < e.getYOnScreen() && e.getYOnScreen() < 1200 ) {
+            canvasPanel.getGame().getMovementState().
+                    moveMouse(e.getXOnScreen(), e.getYOnScreen());            
+        }
     }
 
     @Override
