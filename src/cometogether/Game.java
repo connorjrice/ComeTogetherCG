@@ -1,9 +1,13 @@
 package cometogether;
 
+import cometogether.States.MovementState;
+import cometogether.States.ObstacleState;
 import cometogether.GameObjects.GameObject;
 import cometogether.GameObjects.PlayerBox;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Graphics2D;
+import java.awt.Toolkit;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
@@ -12,7 +16,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
+ * 
  * @author Connor
  */
 public class Game {
@@ -21,23 +25,25 @@ public class Game {
     private MovementState movementState;
     
     private boolean gameRunning;
-    private int GWIDTH = 1920;
-    private int GHEIGHT = 1200;
+    private Dimension screenSize;
+    private int GWIDTH;
+    private int GHEIGHT;
     private final ArrayList<GameObject> gameObjects;
     private ArrayList<GameObject> obstacles;
-    private String timerString;
     private String levelString;
     private int level;
-    private double timer;
     private BufferedImage bImg;
-    private BufferedImage lImg;
     private boolean update = true;
+    
 
     private final GamePanel gamePanel;
     
     public Game(GamePanel _gamePanel) {
         this.gamePanel = _gamePanel;
         this.gameObjects = new ArrayList<>();
+        this.screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        this.GWIDTH = screenSize.width;
+        this.GHEIGHT = screenSize.height;
         this.bImg = new BufferedImage(GWIDTH, GHEIGHT, BufferedImage.TYPE_INT_ARGB);
         this.obstacleState = new ObstacleState(this);
         this.movementState = new MovementState(this);
@@ -47,16 +53,20 @@ public class Game {
     public void newGame(boolean win) {
         nextLevel(win);
         pauseGame();
-
         createPlayer();
         levelString = "Level: " + (level-5);
-  
         obstacleState.generateObstacles();
         addObstacles();
-
         startGame();
-
     }
+        
+    private void startGame() {
+        movementState.reset();
+        gameRunning = true;
+        update = true;
+        runGameLoop();
+    }
+    
     
     private void addObstacles() {
         obstacles = obstacleState.getObstacles();
@@ -74,14 +84,7 @@ public class Game {
     private void pauseGame() {
         gameRunning = false;
     }
-    
-    private void startGame() {
-        movementState.reset();
-        gameRunning = true;
-        update = true;
-        runGameLoop();
-    }
-    
+
     private void createPlayer() {
         gameObjects.clear();
         PlayerBox pb = new PlayerBox(new Rectangle2D.Double(-GWIDTH/2, 0,
@@ -105,7 +108,6 @@ public class Game {
     public int getLevel() {
         return level;
     }
-           
     
     private void runGameLoop() {
         Thread loop = new Thread() {
@@ -134,16 +136,16 @@ public class Game {
             bg2d.translate(GWIDTH/2, GHEIGHT/2);
             bg2d.scale(1,-1);
             for (GameObject go : gameObjects) {
-                bg2d.setColor(go.getColor());
-                bg2d.draw(go.getShape());
+                if (go.getPaint() != null) {
+                    bg2d.setPaint(go.getPaint());
+                } else {
+                    bg2d.setColor(go.getColor());                   
+                }
+                 bg2d.fill(go.getShape());
             }
             update = false;
             gamePanel.repaint();
         }
-    }
-    
-    private String getTimer() {
-        return Double.toString(timer);
     }
     
     public void gameLoop() {

@@ -2,6 +2,7 @@
 package cometogether.GameObjects;
 
 import java.awt.Color;
+import java.awt.Paint;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.util.HashMap;
@@ -15,6 +16,7 @@ public abstract class GameObject {
     private Shape shape;
     private Color color;
     private String name;
+    private Paint paint;
     
     public void setShape(Shape s) {
         this.shape = s;
@@ -24,12 +26,20 @@ public abstract class GameObject {
         this.color = c;
     }
     
+    public void setPaint(Paint p) {
+        this.paint = p;
+    }
+    
     public Shape getShape() {
         return shape;
     }
     
     public Color getColor() {
         return color;
+    }
+    
+    public Paint getPaint() {
+        return paint;
     }
     
     public void setName(String s) {

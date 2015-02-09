@@ -1,5 +1,7 @@
 
-package cometogether;
+package cometogether.States;
+
+import cometogether.Game;
 
 /**
  *
