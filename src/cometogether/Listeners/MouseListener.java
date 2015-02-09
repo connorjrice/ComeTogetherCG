@@ -17,12 +17,12 @@ public class MouseListener implements MouseInputListener {
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        canvasPanel.getGame().getMovementState().mouseClick(e.getX(), e.getY());
+        canvasPanel.getGame().getMovementState().mouseClick(e.getXOnScreen(), e.getYOnScreen());
     }
 
     @Override
     public void mousePressed(MouseEvent e) {
-        canvasPanel.getGame().getMovementState().mouseClick(e.getX(), e.getY());
+        canvasPanel.getGame().getMovementState().mouseClick(e.getXOnScreen(), e.getYOnScreen());
     }
 
     @Override

@@ -1,9 +1,10 @@
-package cometogether;
+package cometogether.States;
 
 import cometogether.States.MovementState;
 import cometogether.States.ObstacleState;
 import cometogether.GameObjects.GameObject;
 import cometogether.GameObjects.PlayerBox;
+import cometogether.GamePanel;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
@@ -249,6 +250,6 @@ public class GameState {
     }
     
     public void exit() {
-        System.exit(1);
+        System.exit(0);
     }
 }

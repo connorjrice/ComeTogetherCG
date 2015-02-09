@@ -1,10 +1,11 @@
 package cometogether;
 
+import cometogether.States.GameState;
 import cometogether.Listeners.MouseListener;
 import cometogether.Listeners.KeyboardListener;
-import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Toolkit;
 import javax.swing.JPanel;
 
 /**
@@ -18,7 +19,8 @@ public class GamePanel extends JPanel {
     private GameState game;
 
     public GamePanel() {
-        setPreferredSize(new Dimension(1920,1200));
+        
+        setPreferredSize(Toolkit.getDefaultToolkit().getScreenSize());
         this.keyL = new KeyboardListener(this);
         this.mouseL = new MouseListener(this);
         this.game = new GameState(this);

@@ -1,7 +1,6 @@
 
 package cometogether.States;
 
-import cometogether.GameState;
 import cometogether.GameObjects.GameObject;
 import cometogether.GameObjects.ObstacleBox;
 import java.awt.Color;
@@ -132,9 +131,9 @@ public class ObstacleState {
     
     private int nextRandY() {
         if (random.nextBoolean()) {
-            return random.nextInt(game.getHeight()/2);
+            return random.nextInt(game.getHeight()/2 - 50);
         } else {
-            return -random.nextInt(game.getHeight()/2);
+                return -random.nextInt(game.getHeight()/2 - 50);
         }
     }
 

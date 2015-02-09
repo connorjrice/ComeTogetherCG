@@ -19,6 +19,7 @@ public class ComeTogether {
         jf.getContentPane().getGraphicsConfiguration().getDevice().setFullScreenWindow(jf);
         jf.setBackground(Color.black);
         jf.add(cp);
+
     }
     
 }

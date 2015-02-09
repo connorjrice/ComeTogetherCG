@@ -1,8 +1,6 @@
 
 package cometogether.States;
 
-import cometogether.GameState;
-
 /**
  *
  * @author Connor
