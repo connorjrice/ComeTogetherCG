@@ -1,40 +1,41 @@
 
 package cometogether.States;
 
-import cometogether.Game;
+import cometogether.GameState;
 import cometogether.GameObjects.GameObject;
 import cometogether.GameObjects.ObstacleBox;
 import java.awt.Color;
 import java.awt.GradientPaint;
 import java.awt.Point;
 import java.awt.geom.Rectangle2D;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Random;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  *
  * @author Connor
  */
 public class ObstacleState {
-    private Game game;
+    private GameState game;
     private Random random;
-    private ArrayList<GameObject> obstacles;
+    private ConcurrentHashMap obstacles;
     private GradientPaint grad;
     
-    public ObstacleState(Game g) {
+    public ObstacleState(GameState g) {
         this.game = g;
         this.random = new Random();
         grad = new GradientPaint(new Point(0,0), 
                 Color.white, new Point(500,50), Color.blue);
     }
     
-    public ArrayList<GameObject> getObstacles() {
+    public ConcurrentHashMap getObstacles() {
         return obstacles;
     }
     
     public void generateObstacles() {
-        obstacles = new ArrayList<>();
+        obstacles = new ConcurrentHashMap();
+        int obstacleNumber = 0;
         for (int i = 0; i < game.getLevel(); i++) {
             boolean added = false;
             int attempts = 0;
@@ -45,7 +46,8 @@ public class ObstacleState {
                         nextY, 50, 50), getPaint(nextX, nextY));
                 if (!checkObstacleObstacleCollision(ob) && 
                         !checkObstaclePlayerCollision()) {
-                    obstacles.add(ob);
+                    obstacles.put("Obstacle " + obstacleNumber, ob);
+                    obstacleNumber++;
                     added = true;
                 } else {
                     if (attempts > 10) {
@@ -54,9 +56,7 @@ public class ObstacleState {
                     } else {
                         attempts++;                        
                     }
-
                 }
-
             }
         }
     }
@@ -80,7 +80,7 @@ public class ObstacleState {
     
     public boolean checkObstaclePlayerCollision() {
         boolean collision = false;
-        Iterator<GameObject> it = obstacles.iterator();
+        Iterator<GameObject> it = obstacles.values().iterator();
         while (it.hasNext()) {
             GameObject obstacle = it.next();
             if (obstacle != null) {
@@ -107,7 +107,7 @@ public class ObstacleState {
     private boolean checkObstacleObstacleCollision(ObstacleBox ob) {
         boolean collision = false;
         if (ob != null) {
-            Iterator<GameObject> it = obstacles.iterator();
+            Iterator<GameObject> it = obstacles.values().iterator();
             while (it.hasNext()) {
                 GameObject obstacle = it.next();
                 if (obstacle != null) {

@@ -10,37 +10,44 @@ import java.awt.Graphics2D;
 import java.awt.Toolkit;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * 
+ * Game State class. Creates other states and sets up gameplay.
  * @author Connor
  */
-public class Game {
+public class GameState {
     
     private ObstacleState obstacleState;
     private MovementState movementState;
     
     private boolean gameRunning;
+    private boolean update = true;
+    
     private Dimension screenSize;
     private int GWIDTH;
     private int GHEIGHT;
-    private final ArrayList<GameObject> gameObjects;
-    private ArrayList<GameObject> obstacles;
+    
+    private ConcurrentHashMap gameObjects;
+    private ConcurrentHashMap obstacles;
+    
     private String levelString;
     private int level;
-    private BufferedImage bImg;
-    private boolean update = true;
     
+    private BufferedImage bImg;
 
     private final GamePanel gamePanel;
     
-    public Game(GamePanel _gamePanel) {
+    /**
+     * Default constructor.
+     * @param _gamePanel JPanel where game is drawn.
+     */
+    public GameState(GamePanel _gamePanel) {
         this.gamePanel = _gamePanel;
-        this.gameObjects = new ArrayList<>();
+        this.gameObjects = new ConcurrentHashMap();
         this.screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         this.GWIDTH = screenSize.width;
         this.GHEIGHT = screenSize.height;
@@ -50,6 +57,12 @@ public class Game {
         this.level = 4;
     }
     
+    /**
+     * Sets up a new game.
+     * if (win), increments number of obstacles (level)
+     * else, decrements number of obstacles
+     * @param win 
+     */
     public void newGame(boolean win) {
         nextLevel(win);
         pauseGame();
@@ -59,7 +72,10 @@ public class Game {
         addObstacles();
         startGame();
     }
-        
+     
+    /**
+     * Resets movement state, and starts the game.
+     */
     private void startGame() {
         movementState.reset();
         gameRunning = true;
@@ -67,12 +83,18 @@ public class Game {
         runGameLoop();
     }
     
-    
+    /**
+     * Adds obstacles to the game.
+     */
     private void addObstacles() {
         obstacles = obstacleState.getObstacles();
-        gameObjects.addAll(obstacles);
+        gameObjects.putAll(obstacles);
     }
     
+    /**
+     * Increments or decrements level based upon win.
+     * @param win 
+     */
     private void nextLevel(boolean win) {
         if (win) {
             level++;            
@@ -81,10 +103,16 @@ public class Game {
         }
     }
     
+    /**
+     * Pauses the update loop.
+     */
     private void pauseGame() {
         gameRunning = false;
     }
 
+    /**
+     * Creates player geometry.
+     */
     private void createPlayer() {
         gameObjects.clear();
         PlayerBox pb = new PlayerBox(new Rectangle2D.Double(-GWIDTH/2, 0,
@@ -93,22 +121,34 @@ public class Game {
         PlayerBox pb2 = new PlayerBox(new Rectangle2D.Double(GWIDTH/2-150, 0,
                 100,100), Color.red);
         pb2.setName("PlayerBox2");
-        gameObjects.add(pb);
-        gameObjects.add(pb2);
+        gameObjects.put("PlayerBox", pb);
+        gameObjects.put("PlayerBox2", pb2);
     }
     
+    /**
+     * @return height of GamePanel.
+     */
     public int getHeight() {
         return GHEIGHT;
     }
     
+    /**
+     * @return width of GamePanel.
+     */
     public int getWidth() {
         return GWIDTH;
     }
     
+    /**
+     * @return Current level (number of obstacles)
+     */
     public int getLevel() {
         return level;
     }
     
+    /**
+     * Creates and runs the game loop.
+     */
     private void runGameLoop() {
         Thread loop = new Thread() {
             
@@ -120,10 +160,16 @@ public class Game {
         loop.start();
     }
     
+    /**
+     * @return BufferedImage of current game.
+     */
     public BufferedImage getImage() {
         return bImg;
     }
     
+    /**
+     * Updates the game.
+     */
     private void updateBufferedImage() {
         if (update) {
             bImg = new BufferedImage(GWIDTH, GHEIGHT, 
@@ -135,13 +181,14 @@ public class Game {
             bg2d.fillRect(0,0,GWIDTH, GHEIGHT);
             bg2d.translate(GWIDTH/2, GHEIGHT/2);
             bg2d.scale(1,-1);
-            for (GameObject go : gameObjects) {
+            for (Iterator it = gameObjects.values().iterator(); it.hasNext();) {
+                GameObject go =  (GameObject) it.next();
                 if (go.getPaint() != null) {
                     bg2d.setPaint(go.getPaint());
                 } else {
                     bg2d.setColor(go.getColor());                   
                 }
-                 bg2d.fill(go.getShape());
+                bg2d.fill(go.getShape());
             }
             update = false;
             gamePanel.repaint();
@@ -186,16 +233,11 @@ public class Game {
     }
     
     public GameObject getObject(String name) {
-        Iterator<GameObject> it = gameObjects.iterator();
-        while (it.hasNext()) {
-            GameObject go = it.next();
-            if (go != null) {
-                if (go.getName().equals(name)) {
-                    return go;
-                }
-            }
+        if (gameObjects.containsKey(name)) {
+            return (GameObject) gameObjects.get(name);
+        } else {
+            return null;
         }
-        return null;
     } 
     
     public ObstacleState getObstacleState() {

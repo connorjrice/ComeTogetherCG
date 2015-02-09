@@ -15,13 +15,13 @@ public class GamePanel extends JPanel {
 
     private final KeyboardListener keyL;
     private final MouseListener mouseL;
-    private Game game;
+    private GameState game;
 
     public GamePanel() {
         setPreferredSize(new Dimension(1920,1200));
         this.keyL = new KeyboardListener(this);
         this.mouseL = new MouseListener(this);
-        this.game = new Game(this);
+        this.game = new GameState(this);
         addMouseMotionListener(mouseL);
         addMouseListener(mouseL);
         addKeyListener(keyL);
@@ -36,7 +36,7 @@ public class GamePanel extends JPanel {
         g2d.drawImage(game.getImage(), 0,0, this);
     }
     
-    public Game getGame() {
+    public GameState getGame() {
         return game;
     }
     

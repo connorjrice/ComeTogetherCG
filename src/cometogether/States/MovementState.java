@@ -1,19 +1,19 @@
 
 package cometogether.States;
 
-import cometogether.Game;
+import cometogether.GameState;
 
 /**
  *
  * @author Connor
  */
 public class MovementState {
-    private Game game;
+    private GameState game;
     private int lastMouseX, lastMouseY;
     private boolean mouseMotion = false;
     private boolean mouseSwitch = false;
 
-    public MovementState(Game _g) {
+    public MovementState(GameState _g) {
         this.game = _g;
     }
     
